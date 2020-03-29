@@ -10,8 +10,7 @@ import Foundation
 import UIKit
 import SpriteKit
 
-struct Tile: Equatable {
+struct TileModel: Equatable {
     var title: SKLabelNode
-    var color: UIColor
     var node: SKSpriteNode
 }

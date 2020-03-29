@@ -18,7 +18,6 @@ class MainViewController: UIViewController {
         self.view = SKView(frame: view.frame)
         if let skView = self.view as? SKView {
             skView.presentScene(scene)
-            skView.showsPhysics = true
         }
     }
     

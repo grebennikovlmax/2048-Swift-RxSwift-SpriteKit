@@ -14,6 +14,7 @@
 		502FF74A242A4C5500560D29 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 502FF749242A4C5500560D29 /* MainViewController.swift */; };
 		50E20816242B9BCA00354B8F /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E20815242B9BCA00354B8F /* GameScene.swift */; };
 		50E2081A242C5D9200354B8F /* TilesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E20819242C5D9200354B8F /* TilesModel.swift */; };
+		50E208202430EFF500354B8F /* GameLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E2081F2430EFF500354B8F /* GameLogic.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		502FF749242A4C5500560D29 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		50E20815242B9BCA00354B8F /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		50E20819242C5D9200354B8F /* TilesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TilesModel.swift; sourceTree = "<group>"; };
+		50E2081F2430EFF500354B8F /* GameLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLogic.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				502FF749242A4C5500560D29 /* MainViewController.swift */,
 				50E20815242B9BCA00354B8F /* GameScene.swift */,
 				50E20819242C5D9200354B8F /* TilesModel.swift */,
+				50E2081F2430EFF500354B8F /* GameLogic.swift */,
 				502FF71A242A48B300560D29 /* Assets.xcassets */,
 				502FF71C242A48B300560D29 /* LaunchScreen.storyboard */,
 				502FF71F242A48B300560D29 /* Info.plist */,
@@ -140,6 +143,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50E208202430EFF500354B8F /* GameLogic.swift in Sources */,
 				502FF712242A48B200560D29 /* AppDelegate.swift in Sources */,
 				502FF714242A48B200560D29 /* SceneDelegate.swift in Sources */,
 				50E20816242B9BCA00354B8F /* GameScene.swift in Sources */,
