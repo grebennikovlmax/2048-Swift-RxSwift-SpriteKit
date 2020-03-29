@@ -74,9 +74,16 @@ class GameScene: SKScene {
         view?.addGestureRecognizer(right)
     }
     
+    func matchingTiles(this tile: Tile, with nextTile: Tile) {
+        tile.title.text = String(Int(tile.title.text!)! * 2)
+        tile.node.color = .red
+        tiles.removeAll { $0 == nextTile }
+        nextTile.node.removeFromParent()
+    }
+    
     @objc func swipeUp() {
         let check = tiles.map({ $0.node.position })
-        for tile in tiles {
+        for tile in tiles.sorted(by: { $0.node.position.y > $1.node.position.y }) {
             guard tile.node.position.y != CGFloat(135) else { continue }
             let rowTiles = tiles.filter { $0.node.position.x == tile.node.position.x }.sorted(by: {$0.node.position.y > $1.node.position.y})
             let target: CGFloat = 135 - tile.node.position.y
@@ -84,90 +91,98 @@ class GameScene: SKScene {
                 if rowTiles.indices.contains(index - 1){
                     let nextTile = rowTiles[index - 1]
                     if tile.title.text == nextTile.title.text {
-                        tile.title.text = String(Int(tile.title.text!)! * 2)
-                        tile.node.run(SKAction.moveTo(y: tile.node.position.y + target - CGFloat((index - 1) * 90), duration: 0.2))
+                        tile.node.run(SKAction.moveTo(y: tile.node.position.y + target - CGFloat((index - 1) * 90), duration: 0.1))
+                        matchingTiles(this: tile, with: nextTile)
                     } else {
-                        tile.node.run(SKAction.moveTo(y: tile.node.position.y + target - CGFloat(index * 90), duration: 0.2))
+                        tile.node.run(SKAction.moveTo(y: tile.node.position.y + target - CGFloat(index * 90), duration: 0.1))
                     }
                 } else {
-                    tile.node.run(SKAction.moveTo(y: tile.node.position.y + target - CGFloat(index * 90), duration: 0.2))
+                    tile.node.run(SKAction.moveTo(y: tile.node.position.y + target - CGFloat(index * 90), duration: 0.1))
                 }
             }
         }
-//        for tile in tilesOnDisplay {
-//            guard tile.node.position.y != CGFloat(135) else { continue }
-//            let rowTiles = tilesOnDisplay.filter { $0.node.position.x == tile.node.position.x }.sorted(by: {$0.node.position.y > $1.node.position.y})
-//            let target: CGFloat = 135 - tile.node.position.y
-//            if let index = rowTiles.firstIndex(of: tile) {
-//                if rowTiles.indices.contains(index - 1){
-//                    let nextTile = rowTiles[index - 1]
-//                    if tile.title.text == nextTile.title.text {
-//                        tilesOnDisplay.remove(at: tilesOnDisplay.firstIndex(of: nextTile)!)
-//                        tiles.append(nextTile)
-//                        nextTile.node.removeFromParent()
-//                        tile.title.text = String(Int(tile.title.text!)! * 2)
-//                        tile.node.run(SKAction.moveTo(y: tile.node.position.y + target - CGFloat((index - 1) * 90), duration: 0.2))
-//                    } else {
-//                        tile.node.run(SKAction.moveTo(y: tile.node.position.y + target - CGFloat(index * 90), duration: 0.2))
-//                    }
-//                } else {
-//                    tile.node.run(SKAction.moveTo(y: tile.node.position.y + target - CGFloat(index * 90), duration: 0.2))
-//                }
-//            }
-//        }
-        run(.wait(forDuration: 0.3)) { [weak self] in
+        run(.wait(forDuration: 0.2)) { [weak self] in
             if check != self?.tiles.map({ $0.node.position }) {
                 self?.createTile()
             }
         }
-//        moveTiles(to: "Up", axis: "y")
     }
     
     @objc func swipeDown() {
-        moveTiles(to: "Down", axis: "y")
+        let check = tiles.map({ $0.node.position })
+        for tile in tiles.sorted(by: { $0.node.position.y < $1.node.position.y }) {
+            guard tile.node.position.y != CGFloat(-135) else { continue }
+            let rowTiles = tiles.filter { $0.node.position.x == tile.node.position.x }.sorted(by: {$0.node.position.y < $1.node.position.y})
+            let target: CGFloat = -135 - tile.node.position.y
+            if let index = rowTiles.firstIndex(of: tile) {
+                if rowTiles.indices.contains(index - 1){
+                    let nextTile = rowTiles[index - 1]
+                    if tile.title.text == nextTile.title.text {
+                        tile.node.run(SKAction.moveTo(y: tile.node.position.y + target + CGFloat((index - 1) * 90), duration: 0.1))
+                        matchingTiles(this: tile, with: nextTile)
+                    } else {
+                        tile.node.run(SKAction.moveTo(y: tile.node.position.y + target + CGFloat(index * 90), duration: 0.1))
+                    }
+                } else {
+                    tile.node.run(SKAction.moveTo(y: tile.node.position.y + target + CGFloat(index * 90), duration: 0.1))
+                }
+            }
+        }
+        run(.wait(forDuration: 0.2)) { [weak self] in
+            if check != self?.tiles.map({ $0.node.position }) {
+                self?.createTile()
+            }
+        }
     }
     
     @objc func swipeLeft() {
-        moveTiles(to: "Left", axis: "x")
+        let check = tiles.map({ $0.node.position })
+        for tile in tiles.sorted(by: { $0.node.position.x < $1.node.position.x }) {
+            guard tile.node.position.x != CGFloat(-135) else { continue }
+            let rowTiles = tiles.filter { $0.node.position.y == tile.node.position.y }.sorted(by: {$0.node.position.x < $1.node.position.x})
+            let target: CGFloat = -135 - tile.node.position.x
+            if let index = rowTiles.firstIndex(of: tile) {
+                if rowTiles.indices.contains(index - 1){
+                    let nextTile = rowTiles[index - 1]
+                    if tile.title.text == nextTile.title.text {
+                        tile.node.run(SKAction.moveTo(x: tile.node.position.x + target + CGFloat((index - 1) * 90), duration: 0.1))
+                        matchingTiles(this: tile, with: nextTile)
+                    } else {
+                        tile.node.run(SKAction.moveTo(x: tile.node.position.x + target + CGFloat(index * 90), duration: 0.1))
+                    }
+                } else {
+                    tile.node.run(SKAction.moveTo(x: tile.node.position.x + target + CGFloat(index * 90), duration: 0.1))
+                }
+            }
+        }
+        run(.wait(forDuration: 0.2)) { [weak self] in
+            if check != self?.tiles.map({ $0.node.position }) {
+                self?.createTile()
+            }
+        }
     }
     
     @objc func swipeRight() {
-        moveTiles(to: "Right", axis: "x")
-    }
-    
-    func moveTiles(to direction: String, axis: String) {
-        let lastPoint: CGFloat = direction == "Up" || direction == "Right" ? 135: -135
         let check = tiles.map({ $0.node.position })
-        for tile in tiles {
-            let position = axis == "x" ? tile.node.position.x : tile.node.position.y
-            let rowAxis = axis == "x" ? tile.node.position.y : tile.node.position.x
-            guard position != lastPoint else { continue }
-            var rowTiles = axis == "x" ?
-                tiles.filter { $0.node.position.y == rowAxis } :
-                tiles.filter { $0.node.position.x == rowAxis }
-            if axis == "x" {
-                if lastPoint > 0 {
-                    rowTiles = rowTiles.sorted(by: {$0.node.position.x > $1.node.position.x})
+        for tile in tiles.sorted(by: { $0.node.position.x > $1.node.position.x }) {
+            guard tile.node.position.x != CGFloat(135) else { continue }
+            let rowTiles = tiles.filter { $0.node.position.y == tile.node.position.y }.sorted(by: {$0.node.position.x > $1.node.position.x})
+            let target: CGFloat = 135 - tile.node.position.x
+            if let index = rowTiles.firstIndex(of: tile) {
+                if rowTiles.indices.contains(index - 1){
+                    let nextTile = rowTiles[index - 1]
+                    if tile.title.text == nextTile.title.text {
+                        tile.node.run(SKAction.moveTo(x: tile.node.position.x + target - CGFloat((index - 1) * 90), duration: 0.1))
+                        matchingTiles(this: tile, with: nextTile)
+                    } else {
+                        tile.node.run(SKAction.moveTo(x: tile.node.position.x + target - CGFloat(index * 90), duration: 0.1))
+                    }
                 } else {
-                    rowTiles = rowTiles.sorted(by: {$0.node.position.x < $1.node.position.x})
+                    tile.node.run(SKAction.moveTo(x: tile.node.position.x + target - CGFloat(index * 90), duration: 0.1))
                 }
-            } else {
-               if lastPoint > 0 {
-                    rowTiles = rowTiles.sorted(by: {$0.node.position.y > $1.node.position.y})
-                } else {
-                    rowTiles = rowTiles.sorted(by: {$0.node.position.y < $1.node.position.y})
-                }
-            }
-            let target: CGFloat = lastPoint - position
-             if let index = rowTiles.firstIndex(of: tile) {
-                let add: CGFloat = direction == "Up" || direction == "Right" ? CGFloat(index * (-1)): CGFloat(index)
-                let action =  axis == "x" ?
-                    SKAction.moveTo(x: tile.node.position.x + target + CGFloat(add * 90), duration: 0.2):
-                    SKAction.moveTo(y: tile.node.position.y + target + CGFloat(add * 90), duration: 0.2)
-                tile.node.run(action)
             }
         }
-        run(.wait(forDuration: 0.25)) { [weak self] in
+        run(.wait(forDuration: 0.2)) { [weak self] in
             if check != self?.tiles.map({ $0.node.position }) {
                 self?.createTile()
             }
