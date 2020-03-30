@@ -10,6 +10,7 @@ import UIKit
 import SpriteKit
 
 protocol GameSceneDelegate: AnyObject {
+    func gameOver()
     func createTile()
     func moveTo(tile: SKSpriteNode, to position: CGFloat, direction: GameLogic.directions)
     func deleteChild(_ tile: SKSpriteNode)
@@ -60,7 +61,7 @@ class GameScene: SKScene {
 }
 
 extension GameScene: GameSceneDelegate {
-    
+
     func moveTo(tile: SKSpriteNode, to position: CGFloat, direction: GameLogic.directions) {
         var action: SKAction
         if direction == .up || direction == .down {
@@ -72,14 +73,19 @@ extension GameScene: GameSceneDelegate {
     }
     
     func createTile() {
-        run(.wait(forDuration: 0.2)) { [weak self] in
+        run(.wait(forDuration: 0.15)) { [weak self] in
             self?.gameLogic.configureTile(&self!.tile, withLabel: &self!.tileLabel)
             self?.mainBoard.addChild(self!.tile)
         }
+        
     }
     
     func deleteChild(_ tile: SKSpriteNode) {
         tile.removeFromParent()
+    }
+    
+    func gameOver() {
+        print("GameOver")
     }
 }
 
