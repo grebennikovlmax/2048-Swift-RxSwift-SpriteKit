@@ -11,7 +11,7 @@ import SpriteKit
 
 class GameLogic {
     
-    weak var delegate: GameSceneDelegate?
+    weak var delegate: GameSceneDelegate? { didSet { createTile() }}
     var mainBoardSize = CGSize(width: 300, height: 300)
     private let border: CGFloat = 5
     private let gameSize: Int = 4
@@ -77,26 +77,23 @@ class GameLogic {
         }
     }
     
-    func configureTile(_ tile: inout SKSpriteNode, withLabel tileTitle: inout SKLabelNode) {
+    func createTile() {
         let usingCoordinates = tiles.map { $0.node.position }
         let openCoordinates = coordinates.filter { !usingCoordinates.contains($0) }
-        tile = SKSpriteNode(color: .darkGray, size: tileSize)
+        let tile = SKSpriteNode(color: .darkGray, size: tileSize)
         tile.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         tile.position = openCoordinates.randomElement()!
-        tileTitle = SKLabelNode(text: "2")
-        tileTitle.fontSize = 30
-        tileTitle.fontColor = .black
-        tileTitle.position = CGPoint(x: 0, y: -(tileTitle.frame.height)/2)
+        let tileTitle = SKLabelNode(text: "2")
         tileTitle.text = ["2","4"].randomElement()
         tile.color = setColor(for: tileTitle.text)
-        tile.addChild(tileTitle)
+        delegate?.createTile(tile, with: tileTitle)
         self.tiles.append(TileModel(title: tileTitle, node: tile))
     }
     
     func matchingTiles(this tile: TileModel, with nextTile: TileModel) {
         guard let title = tile.title.text, let tileNumber = Int(title) else { return }
         tile.title.text = String(tileNumber * 2)
-        self.score += tileNumber
+        self.score += tileNumber * 2
         tile.node.color = setColor(for: tile.title.text)
         tiles.removeAll { $0 == nextTile }
         delegate?.deleteChild(nextTile.node)
@@ -144,7 +141,9 @@ class GameLogic {
             isMoved = true
         }
         if isMoved {
-            delegate?.createTile()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                self.createTile()
+            }
         } else if !isMoved && tiles.count == coordinates.count {
             delegate?.gameOver()
         }

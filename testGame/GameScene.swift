@@ -12,7 +12,7 @@ import SpriteKit
 protocol GameSceneDelegate: AnyObject {
     func setScore(_ score: Int)
     func gameOver()
-    func createTile()
+    func createTile(_ tile: SKSpriteNode, with title: SKLabelNode)
     func moveTo(tile: SKSpriteNode, to position: CGFloat, direction: GameLogic.directions)
     func deleteChild(_ tile: SKSpriteNode)
 }
@@ -22,8 +22,6 @@ class GameScene: SKScene {
     private var gameLogic = GameLogic()
     private var scoreBoard = SKLabelNode()
     private var mainBoard = SKSpriteNode()
-    private var tile = SKSpriteNode()
-    private var tileLabel = SKLabelNode()
     private var gameOverNode = SKSpriteNode()
     
     override func didMove(to view: SKView) {
@@ -35,9 +33,9 @@ class GameScene: SKScene {
         gameLogic.delegate = self
         setupSwipeControls()
         createMainBoard()
-        createTile()
         createScoreBoard()
     }
+
     
     private func createScoreBoard() {
         scoreBoard = SKLabelNode(text: "Score: 0")
@@ -90,12 +88,14 @@ extension GameScene: GameSceneDelegate {
         tile.run(action)
     }
     
-    func createTile() {
-        run(.wait(forDuration: 0.15)) { [weak self] in
-            self?.gameLogic.configureTile(&self!.tile, withLabel: &self!.tileLabel)
-            self?.mainBoard.addChild(self!.tile)
+    func createTile(_ tile: SKSpriteNode, with title: SKLabelNode) {
+        title.fontSize = 30
+        title.fontColor = .black
+        title.position = CGPoint(x: 0, y: -(title.frame.height)/2)
+        tile.addChild(title)
+        run(.wait(forDuration: 0.2)) { [weak self] in
+            self?.mainBoard.addChild(tile)
         }
-        
     }
     
     func deleteChild(_ tile: SKSpriteNode) {
