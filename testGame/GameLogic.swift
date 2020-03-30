@@ -12,26 +12,46 @@ import SpriteKit
 class GameLogic {
     
     weak var delegate: GameSceneDelegate?
-    private let mainBoardSize = CGSize(width: 370, height: 370)
-    private let tileSize = CGSize(width: 80, height: 80)
-    private let border: CGFloat = 10
-    private let coordinates: [CGPoint] = [
-    CGPoint(x: -135, y: 135), CGPoint(x: -45, y: 135), CGPoint(x: 45, y: 135), CGPoint(x: 135, y: 135),
-    CGPoint(x: -135, y: 45), CGPoint(x: -45, y: 45), CGPoint(x: 45, y: 45), CGPoint(x: 135, y: 45),
-    CGPoint(x: -135, y: -45), CGPoint(x: -45, y: -45), CGPoint(x: 45, y: -45), CGPoint(x: 135, y: -45),
-    CGPoint(x: -135, y: -135), CGPoint(x: -45, y: -135), CGPoint(x: 45, y: -135), CGPoint(x: 135, y: -135)]
-    private var maxValue: CGFloat {
-        guard let max = self.coordinates.max(by: {$0.x < $1.x})?.x else { return 0}
-        return max
+    private let mainBoardSize = CGSize(width: 350, height: 350)
+    private let border: CGFloat = 5
+    private let gameSize: Int = 4
+    
+    private var tileSize: CGSize {
+        let num = CGFloat(self.gameSize)
+        let sideSize = (self.mainBoardSize.height - (num * border + border)) / num
+        return CGSize(width: sideSize, height: sideSize)
     }
-    private var minValue: CGFloat {
-        guard let min = self.coordinates.max(by: {$0.x > $1.x})?.x else { return 0}
-        return min
-    }
-    private var tiles: [TileModel] = []
+    
     private var rectWidth: CGFloat {
         return border + tileSize.width
     }
+    
+    private var maxValue: CGFloat {
+        return (mainBoardSize.width - rectWidth - border) / 2
+    }
+    
+    private var minValue: CGFloat {
+        return -maxValue
+    }
+    
+    private var coordinates: [CGPoint] {
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var point: CGPoint
+        var coordinatesArray: [CGPoint] = []
+        for _ in 1...gameSize {
+            for _ in 1...gameSize {
+            point = CGPoint(x: minValue + x, y: minValue + y)
+            coordinatesArray.append(point)
+            x += rectWidth
+            }
+            y += rectWidth
+            x = 0
+        }
+        return coordinatesArray
+    }
+    
+    private var tiles: [TileModel] = []
 
     enum directions {
         case up
