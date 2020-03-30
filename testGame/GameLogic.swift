@@ -27,7 +27,7 @@ class GameLogic {
         case right
         case left
     }
-     
+    
     func configureMainBoard(_ mainBoard: inout SKSpriteNode) {
         mainBoard = SKSpriteNode(color: .lightGray, size: mainBoardSize)
         mainBoard.anchorPoint = CGPoint(x: 0.5,y: 0.5)
@@ -45,7 +45,7 @@ class GameLogic {
         tileTitle.position = CGPoint(x: 0, y: -(tileTitle.frame.height)/2)
         tileTitle.text = ["2","4"].randomElement()
         tile.addChild(tileTitle)
-        tiles.append(TileModel(title: tileTitle, node: tile))
+        self.tiles.append(TileModel(title: tileTitle, node: tile))
     }
     
     func matchingTiles(this tile: TileModel, with nextTile: TileModel) {
@@ -56,98 +56,74 @@ class GameLogic {
      }
     
     @objc func swipeUp() {
-        var position: CGFloat = 0
-        for tile in tiles.sorted(by: { $0.node.position.y > $1.node.position.y }) {
-            guard tile.node.position.y != CGFloat(135) else { continue }
-            let rowTiles = tiles.filter { $0.node.position.x == tile.node.position.x }.sorted(by: {$0.node.position.y > $1.node.position.y})
-            let target: CGFloat = 135 - tile.node.position.y
-            if let index = rowTiles.firstIndex(of: tile) {
-                if rowTiles.indices.contains(index - 1){
-                    let nextTile = rowTiles[index - 1]
-                    if tile.title.text == nextTile.title.text {
-                        position = tile.node.position.y + target - CGFloat((index - 1) * 90)
-                        matchingTiles(this: tile, with: nextTile)
-                    } else {
-                        position = tile.node.position.y + target - CGFloat(index * 90)
-                    }
-                } else {
-                    position = tile.node.position.y + target - CGFloat(index * 90)
-                }
-            }
-            delegate?.moveTo(tile: tile.node, to: position, direction: .up)
-        }
-        delegate?.createTile()
+        swipe(direction: .up, sort: { $0.node.position.y > $1.node.position.y })
     }
     
     @objc func swipeDown() {
-        var position: CGFloat = 0
-        for tile in tiles.sorted(by: { $0.node.position.y < $1.node.position.y }) {
-            guard tile.node.position.y != CGFloat(-135) else { continue }
-            let rowTiles = tiles.filter { $0.node.position.x == tile.node.position.x }.sorted(by: {$0.node.position.y < $1.node.position.y})
-            let target: CGFloat = -135 - tile.node.position.y
-            if let index = rowTiles.firstIndex(of: tile) {
-                if rowTiles.indices.contains(index - 1){
-                    let nextTile = rowTiles[index - 1]
-                    if tile.title.text == nextTile.title.text {
-                        position = tile.node.position.y + target + CGFloat((index - 1) * 90)
-                        matchingTiles(this: tile, with: nextTile)
-                    } else {
-                        position = tile.node.position.y + target + CGFloat(index * 90)
-                    }
-                } else {
-                    position =  tile.node.position.y + target + CGFloat(index * 90)
-                }
-            }
-            delegate?.moveTo(tile: tile.node, to: position, direction: .down)
-        }
-        delegate?.createTile()
+        swipe(direction: .down, sort: { $0.node.position.y < $1.node.position.y })
     }
     
     @objc func swipeRight() {
-        var position: CGFloat = 0
-        for tile in tiles.sorted(by: { $0.node.position.x > $1.node.position.x }) {
-            guard tile.node.position.x != CGFloat(135) else { continue }
-            let rowTiles = tiles.filter { $0.node.position.y == tile.node.position.y }.sorted(by: {$0.node.position.x > $1.node.position.x})
-            let target: CGFloat = 135 - tile.node.position.x
-            if let index = rowTiles.firstIndex(of: tile) {
-                if rowTiles.indices.contains(index - 1){
-                    let nextTile = rowTiles[index - 1]
-                    if tile.title.text == nextTile.title.text {
-                        position = tile.node.position.x + target - CGFloat((index - 1) * 90)
-                        matchingTiles(this: tile, with: nextTile)
-                    } else {
-                       position = tile.node.position.x + target - CGFloat(index * 90)
-                    }
-                } else {
-                    position =  tile.node.position.x + target - CGFloat(index * 90)
-                }
-            }
-            delegate?.moveTo(tile: tile.node, to: position, direction: .right)
-        }
-        delegate?.createTile()
+        swipe(direction: .right, sort: { $0.node.position.x > $1.node.position.x })
     }
     
     @objc func swipeLeft() {
-        var position: CGFloat = 0
-        for tile in tiles.sorted(by: { $0.node.position.x < $1.node.position.x }) {
-            guard tile.node.position.x != CGFloat(-135) else { continue }
-            let rowTiles = tiles.filter { $0.node.position.y == tile.node.position.y }.sorted(by: {$0.node.position.x < $1.node.position.x})
-            let target: CGFloat = -135 - tile.node.position.x
-            if let index = rowTiles.firstIndex(of: tile) {
-                if rowTiles.indices.contains(index - 1){
-                    let nextTile = rowTiles[index - 1]
-                    if tile.title.text == nextTile.title.text {
-                        position = tile.node.position.x + target + CGFloat((index - 1) * 90)
-                        matchingTiles(this: tile, with: nextTile)
-                    } else {
-                        position = tile.node.position.x + target + CGFloat(index * 90)
-                    }
-                } else {
-                    position = tile.node.position.x + target + CGFloat(index * 90)
-                }
-            }
-            delegate?.moveTo(tile: tile.node, to: position, direction: .left)
-        }
-        delegate?.createTile()
+        swipe(direction: .left, sort: { $0.node.position.x < $1.node.position.x })
     }
+    
+    private func swipe (direction: directions, sort: (TileModel, TileModel) -> Bool) {
+        var position: CGFloat
+        var target: CGFloat = 0
+        var topPosition: CGFloat = 0
+        var nodePosition: CGFloat = 0
+        var operation: CGFloat = 0
+        var isMoved = false
+        var filter: (TileModel) -> Bool = { _ in return true }
+        for tile in tiles.sorted(by: sort) {
+            configureByDirection(direction, tile, &topPosition, &nodePosition, &operation, &filter)
+            guard nodePosition != topPosition else { continue }
+            target = topPosition - nodePosition
+            let rowTiles = tiles.filter(filter).sorted(by: sort)
+            guard let index = rowTiles.firstIndex(of: tile) else { continue }
+            if rowTiles.indices.contains(index - 1), tile.title.text == rowTiles[index - 1].title.text {
+                position = nodePosition + target + CGFloat((index - 1) * 90) * operation
+                matchingTiles(this: tile, with: rowTiles[index - 1])
+            } else {
+                position = nodePosition + target + CGFloat(index * 90) * operation
+            }
+            guard position != nodePosition else { continue }
+            delegate?.moveTo(tile: tile.node, to: position, direction: direction)
+            isMoved = true
+        }
+        if isMoved  {
+            delegate?.createTile()
+        }
+    }
+    
+    func configureByDirection(_ direction: directions, _ tile: TileModel, _ topPosition: inout CGFloat, _ nodePosition: inout CGFloat
+        , _ operation: inout CGFloat, _ filter: inout (TileModel) -> Bool) {
+        switch direction {
+        case .up:
+            topPosition = 135
+            nodePosition = tile.node.position.y
+            filter = { $0.node.position.x == tile.node.position.x }
+            operation = -1
+        case .down:
+            topPosition = -135
+            nodePosition = tile.node.position.y
+            filter = { $0.node.position.x == tile.node.position.x }
+            operation = 1
+        case .right:
+            topPosition = 135;
+            nodePosition = tile.node.position.x;
+            filter = { $0.node.position.y == tile.node.position.y }
+            operation = -1
+        case .left:
+            topPosition = -135;
+            nodePosition = tile.node.position.x;
+            filter = { $0.node.position.y == tile.node.position.y }
+            operation = 1
+        }
+    }
+    
 }
