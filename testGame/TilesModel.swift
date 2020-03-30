@@ -12,5 +12,5 @@ import SpriteKit
 
 struct TileModel: Equatable {
     var title: SKLabelNode
-    var node: SKSpriteNode
+    var node: SKShapeNode
 }

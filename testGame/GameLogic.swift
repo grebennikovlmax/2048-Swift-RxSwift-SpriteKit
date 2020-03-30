@@ -11,7 +11,7 @@ import SpriteKit
 
 class GameLogic {
     
-    weak var delegate: GameSceneDelegate? { didSet { createTile() }}
+    weak var delegate: GameSceneDelegate? { didSet { createBlankTiles(); createTile() }}
     var mainBoardSize = CGSize(width: 300, height: 300)
     private let border: CGFloat = 5
     private let gameSize: Int = 4
@@ -59,33 +59,23 @@ class GameLogic {
         case left
     }
     
-    func setColor(for title: String?) -> UIColor {
-        guard let title = title, let number = Int(title) else { return .white }
-        switch number {
-        case 2: return UIColor(red: 255/255, green: 217/255, blue: 184/255, alpha: 1)
-        case 4: return UIColor(red: 255/255, green: 194/255, blue: 140/255, alpha: 1)
-        case 8: return UIColor(red: 255/255, green: 164/255, blue: 84/255, alpha: 1)
-        case 16: return UIColor(red: 255/255, green: 134/255, blue: 36/255, alpha: 1)
-        case 32: return UIColor(red: 255/255, green: 117/255, blue: 0/255, alpha: 1)
-        case 64: return UIColor(red: 255/255, green: 88/255, blue: 59/255, alpha: 1)
-        case 128: return UIColor(red: 255/255, green: 64/255, blue: 31/255, alpha: 1)
-        case 256: return UIColor(red: 255/255, green: 38/255, blue: 0/255, alpha: 1)
-        case 512: return UIColor(red: 209/255, green: 0/255, blue: 0/255, alpha: 1)
-        case 1024: return UIColor(red: 153/255, green: 2/255, blue: 2/255, alpha: 1)
-        case 2048: return UIColor(red: 199/255, green: 8/255, blue: 100/255, alpha: 1)
-        default: return .white
+    func createBlankTiles() {
+        var openCoordinates = self.coordinates
+        while openCoordinates.count != 0 {
+            guard let point = openCoordinates.popLast() else { break }
+            delegate?.createBlankTile(in: point, with: tileSize)
         }
     }
-    
+        
     func createTile() {
         let usingCoordinates = tiles.map { $0.node.position }
         let openCoordinates = coordinates.filter { !usingCoordinates.contains($0) }
-        let tile = SKSpriteNode(color: .darkGray, size: tileSize)
-        tile.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        let tile = SKShapeNode(rectOf: tileSize, cornerRadius: 10)
         tile.position = openCoordinates.randomElement()!
-        let tileTitle = SKLabelNode(text: "2")
+        tile.lineWidth = 0
+        let tileTitle = SKLabelNode()
         tileTitle.text = ["2","4"].randomElement()
-        tile.color = setColor(for: tileTitle.text)
+        tile.fillColor = setColor(for: tileTitle.text)
         delegate?.createTile(tile, with: tileTitle)
         self.tiles.append(TileModel(title: tileTitle, node: tile))
     }
@@ -94,7 +84,7 @@ class GameLogic {
         guard let title = tile.title.text, let tileNumber = Int(title) else { return }
         tile.title.text = String(tileNumber * 2)
         self.score += tileNumber * 2
-        tile.node.color = setColor(for: tile.title.text)
+        tile.node.fillColor = setColor(for: tile.title.text)
         tiles.removeAll { $0 == nextTile }
         delegate?.deleteChild(nextTile.node)
         delegate?.setScore(score)
@@ -173,6 +163,28 @@ class GameLogic {
             nodePosition = tile.node.position.x;
             filter = { $0.node.position.y == tile.node.position.y }
             operation = 1
+        }
+    }
+}
+    //MARK:- Set Color
+
+extension GameLogic {
+    
+    func setColor(for title: String?) -> UIColor {
+        guard let title = title, let number = Int(title) else { return .white }
+        switch number {
+        case 2: return UIColor(red: 255/255, green: 217/255, blue: 184/255, alpha: 1)
+        case 4: return UIColor(red: 255/255, green: 194/255, blue: 140/255, alpha: 1)
+        case 8: return UIColor(red: 255/255, green: 164/255, blue: 84/255, alpha: 1)
+        case 16: return UIColor(red: 255/255, green: 134/255, blue: 36/255, alpha: 1)
+        case 32: return UIColor(red: 255/255, green: 117/255, blue: 0/255, alpha: 1)
+        case 64: return UIColor(red: 255/255, green: 88/255, blue: 59/255, alpha: 1)
+        case 128: return UIColor(red: 255/255, green: 64/255, blue: 31/255, alpha: 1)
+        case 256: return UIColor(red: 255/255, green: 38/255, blue: 0/255, alpha: 1)
+        case 512: return UIColor(red: 209/255, green: 0/255, blue: 0/255, alpha: 1)
+        case 1024: return UIColor(red: 153/255, green: 2/255, blue: 2/255, alpha: 1)
+        case 2048: return UIColor(red: 199/255, green: 8/255, blue: 100/255, alpha: 1)
+        default: return .white
         }
     }
 }

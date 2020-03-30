@@ -11,10 +11,11 @@ import SpriteKit
 
 protocol GameSceneDelegate: AnyObject {
     func setScore(_ score: Int)
+    func createBlankTile(in point: CGPoint, with size: CGSize)
     func gameOver()
-    func createTile(_ tile: SKSpriteNode, with title: SKLabelNode)
-    func moveTo(tile: SKSpriteNode, to position: CGFloat, direction: GameLogic.directions)
-    func deleteChild(_ tile: SKSpriteNode)
+    func createTile(_ tile: SKShapeNode, with title: SKLabelNode)
+    func moveTo(tile: SKShapeNode, to position: CGFloat, direction: GameLogic.directions)
+    func deleteChild(_ tile: SKShapeNode)
 }
 
 class GameScene: SKScene {
@@ -23,6 +24,7 @@ class GameScene: SKScene {
     private var scoreBoard = SKLabelNode()
     private var mainBoard = SKSpriteNode()
     private var gameOverNode = SKSpriteNode()
+    private var cropMainBoard = SKCropNode()
     
     override func didMove(to view: SKView) {
         super.didMove(to: view)
@@ -30,10 +32,10 @@ class GameScene: SKScene {
         self.size = view.frame.size
         self.scaleMode = .resizeFill
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        gameLogic.delegate = self
         setupSwipeControls()
         createMainBoard()
         createScoreBoard()
+        gameLogic.delegate = self
     }
 
     
@@ -47,38 +49,35 @@ class GameScene: SKScene {
     
     private func createMainBoard() {
         let size = gameLogic.mainBoardSize
-        mainBoard = SKSpriteNode(color: .lightGray, size: size)
+        let mask = SKShapeNode(rectOf: size, cornerRadius: 15)
+        mask.fillColor = .white
+        cropMainBoard.maskNode = mask
+        mainBoard = SKSpriteNode(color: .gray, size: size)
         mainBoard.anchorPoint = CGPoint(x: 0.5,y: 0.5)
-        self.addChild(mainBoard)
-    }
-    
-    func setupSwipeControls() {
-        let up = UISwipeGestureRecognizer(target: gameLogic, action: #selector(gameLogic.swipeUp))
-        up.direction = .up
-        view?.addGestureRecognizer(up)
-        
-        let down = UISwipeGestureRecognizer(target: gameLogic, action: #selector(gameLogic.swipeDown))
-        down.direction = .down
-        view?.addGestureRecognizer(down)
-        
-        let left = UISwipeGestureRecognizer(target: gameLogic, action: #selector(gameLogic.swipeLeft))
-        left.direction = .left
-        view?.addGestureRecognizer(left)
-        
-        let right = UISwipeGestureRecognizer(target: gameLogic, action: #selector(gameLogic.swipeRight))
-        right.direction = .right
-        view?.addGestureRecognizer(right)
+        cropMainBoard.addChild(mainBoard)
+        self.addChild(cropMainBoard)
     }
     
 }
 
+    //MARK: - GameSceneDelegate
+
 extension GameScene: GameSceneDelegate {
+    
+    func createBlankTile(in point: CGPoint, with size: CGSize) {
+        let blankTile = SKShapeNode(rectOf: size, cornerRadius: 10)
+        blankTile.position = point
+        blankTile.fillColor = .lightGray
+        blankTile.lineWidth = 0
+        cropMainBoard.addChild(blankTile)
+    }
+    
     
     func setScore(_ score: Int) {
         self.scoreBoard.text = "Score: \(score)"
     }
 
-    func moveTo(tile: SKSpriteNode, to position: CGFloat, direction: GameLogic.directions) {
+    func moveTo(tile: SKShapeNode, to position: CGFloat, direction: GameLogic.directions) {
         var action: SKAction
         if direction == .up || direction == .down {
             action = SKAction.moveTo(y: position, duration: 0.1)
@@ -88,17 +87,18 @@ extension GameScene: GameSceneDelegate {
         tile.run(action)
     }
     
-    func createTile(_ tile: SKSpriteNode, with title: SKLabelNode) {
+    func createTile(_ tile: SKShapeNode, with title: SKLabelNode) {
         title.fontSize = 30
         title.fontColor = .black
         title.position = CGPoint(x: 0, y: -(title.frame.height)/2)
         tile.addChild(title)
-        run(.wait(forDuration: 0.2)) { [weak self] in
-            self?.mainBoard.addChild(tile)
-        }
+        tile.alpha = 0
+        cropMainBoard.addChild(tile)
+        tile.run(SKAction.fadeAlpha(to: 1, duration: 0.2))
+        
     }
     
-    func deleteChild(_ tile: SKSpriteNode) {
+    func deleteChild(_ tile: SKShapeNode) {
         tile.removeFromParent()
     }
     
@@ -116,7 +116,29 @@ extension GameScene: GameSceneDelegate {
         button.fontColor = .black
         gameOverNode.addChild(button)
         gameOverNode.addChild(label)
-        self.addChild(gameOverNode)
+        cropMainBoard.addChild(gameOverNode)
+    }
+}
+
+    //MARK:- GestureRecognition
+
+extension GameScene {
+    func setupSwipeControls() {
+        let up = UISwipeGestureRecognizer(target: gameLogic, action: #selector(gameLogic.swipeUp))
+        up.direction = .up
+        view?.addGestureRecognizer(up)
+        
+        let down = UISwipeGestureRecognizer(target: gameLogic, action: #selector(gameLogic.swipeDown))
+        down.direction = .down
+        view?.addGestureRecognizer(down)
+        
+        let left = UISwipeGestureRecognizer(target: gameLogic, action: #selector(gameLogic.swipeLeft))
+        left.direction = .left
+        view?.addGestureRecognizer(left)
+        
+        let right = UISwipeGestureRecognizer(target: gameLogic, action: #selector(gameLogic.swipeRight))
+        right.direction = .right
+        view?.addGestureRecognizer(right)
     }
 }
 
