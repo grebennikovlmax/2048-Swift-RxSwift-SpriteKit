@@ -18,7 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		502FF70E242A48B200560D29 /* testGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		502FF70E242A48B200560D29 /* 2048.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 2048.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		502FF711242A48B200560D29 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		502FF713242A48B200560D29 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		502FF71A242A48B300560D29 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -52,7 +52,7 @@
 		502FF70F242A48B200560D29 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				502FF70E242A48B200560D29 /* testGame.app */,
+				502FF70E242A48B200560D29 /* 2048.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -76,9 +76,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		502FF70D242A48B200560D29 /* testGame */ = {
+		502FF70D242A48B200560D29 /* 2048 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 502FF722242A48B300560D29 /* Build configuration list for PBXNativeTarget "testGame" */;
+			buildConfigurationList = 502FF722242A48B300560D29 /* Build configuration list for PBXNativeTarget "2048" */;
 			buildPhases = (
 				502FF70A242A48B200560D29 /* Sources */,
 				502FF70B242A48B200560D29 /* Frameworks */,
@@ -88,9 +88,9 @@
 			);
 			dependencies = (
 			);
-			name = testGame;
+			name = 2048;
 			productName = testGame;
-			productReference = 502FF70E242A48B200560D29 /* testGame.app */;
+			productReference = 502FF70E242A48B200560D29 /* 2048.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -121,7 +121,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				502FF70D242A48B200560D29 /* testGame */,
+				502FF70D242A48B200560D29 /* 2048 */,
 			);
 		};
 /* End PBXProject section */
@@ -287,13 +287,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = DQW7D838MA;
 				INFOPLIST_FILE = testGame/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.maksimgrebennikov.testGame;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = 2048;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -306,13 +306,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = DQW7D838MA;
 				INFOPLIST_FILE = testGame/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.maksimgrebennikov.testGame;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = 2048;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -330,7 +330,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		502FF722242A48B300560D29 /* Build configuration list for PBXNativeTarget "testGame" */ = {
+		502FF722242A48B300560D29 /* Build configuration list for PBXNativeTarget "2048" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				502FF723242A48B300560D29 /* Debug */,

@@ -12,13 +12,14 @@ import SpriteKit
 class GameLogic {
     
     weak var delegate: GameSceneDelegate?
-    private let mainBoardSize = CGSize(width: 350, height: 350)
+    var mainBoardSize = CGSize(width: 300, height: 300)
     private let border: CGFloat = 5
     private let gameSize: Int = 4
-    
+    private var score: Int = 0
+    private var tiles: [TileModel] = []
     private var tileSize: CGSize {
-        let num = CGFloat(self.gameSize)
-        let sideSize = (self.mainBoardSize.height - (num * border + border)) / num
+        let num = CGFloat(gameSize)
+        let sideSize = ((mainBoardSize.height - (num * border + border)) / num)
         return CGSize(width: sideSize, height: sideSize)
     }
     
@@ -39,8 +40,8 @@ class GameLogic {
         var y: CGFloat = 0
         var point: CGPoint
         var coordinatesArray: [CGPoint] = []
-        for _ in 1...gameSize {
-            for _ in 1...gameSize {
+        for _ in 0..<gameSize {
+            for _ in 0..<gameSize {
             point = CGPoint(x: minValue + x, y: minValue + y)
             coordinatesArray.append(point)
             x += rectWidth
@@ -50,8 +51,6 @@ class GameLogic {
         }
         return coordinatesArray
     }
-    
-    private var tiles: [TileModel] = []
 
     enum directions {
         case up
@@ -78,11 +77,6 @@ class GameLogic {
         }
     }
     
-    func configureMainBoard(_ mainBoard: inout SKSpriteNode) {
-        mainBoard = SKSpriteNode(color: .lightGray, size: mainBoardSize)
-        mainBoard.anchorPoint = CGPoint(x: 0.5,y: 0.5)
-    }
-    
     func configureTile(_ tile: inout SKSpriteNode, withLabel tileTitle: inout SKLabelNode) {
         let usingCoordinates = tiles.map { $0.node.position }
         let openCoordinates = coordinates.filter { !usingCoordinates.contains($0) }
@@ -100,10 +94,13 @@ class GameLogic {
     }
     
     func matchingTiles(this tile: TileModel, with nextTile: TileModel) {
-        tile.title.text = String(Int(tile.title.text!)! * 2)
+        guard let title = tile.title.text, let tileNumber = Int(title) else { return }
+        tile.title.text = String(tileNumber * 2)
+        self.score += tileNumber
         tile.node.color = setColor(for: tile.title.text)
         tiles.removeAll { $0 == nextTile }
         delegate?.deleteChild(nextTile.node)
+        delegate?.setScore(score)
      }
     
     @objc func swipeUp() {
@@ -179,5 +176,4 @@ class GameLogic {
             operation = 1
         }
     }
-    
 }

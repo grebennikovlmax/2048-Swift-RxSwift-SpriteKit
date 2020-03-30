@@ -10,6 +10,7 @@ import UIKit
 import SpriteKit
 
 protocol GameSceneDelegate: AnyObject {
+    func setScore(_ score: Int)
     func gameOver()
     func createTile()
     func moveTo(tile: SKSpriteNode, to position: CGFloat, direction: GameLogic.directions)
@@ -19,9 +20,11 @@ protocol GameSceneDelegate: AnyObject {
 class GameScene: SKScene {
     
     private var gameLogic = GameLogic()
+    private var scoreBoard = SKLabelNode()
     private var mainBoard = SKSpriteNode()
     private var tile = SKSpriteNode()
     private var tileLabel = SKLabelNode()
+    private var gameOverNode = SKSpriteNode()
     
     override func didMove(to view: SKView) {
         super.didMove(to: view)
@@ -33,10 +36,21 @@ class GameScene: SKScene {
         setupSwipeControls()
         createMainBoard()
         createTile()
+        createScoreBoard()
+    }
+    
+    private func createScoreBoard() {
+        scoreBoard = SKLabelNode(text: "Score: 0")
+        scoreBoard.fontSize = 30
+        scoreBoard.fontColor = .black
+        scoreBoard.position = CGPoint(x: 0, y: mainBoard.frame.height / 1.5)
+        self.addChild(scoreBoard)
     }
     
     private func createMainBoard() {
-        gameLogic.configureMainBoard(&mainBoard)
+        let size = gameLogic.mainBoardSize
+        mainBoard = SKSpriteNode(color: .lightGray, size: size)
+        mainBoard.anchorPoint = CGPoint(x: 0.5,y: 0.5)
         self.addChild(mainBoard)
     }
     
@@ -61,6 +75,10 @@ class GameScene: SKScene {
 }
 
 extension GameScene: GameSceneDelegate {
+    
+    func setScore(_ score: Int) {
+        self.scoreBoard.text = "Score: \(score)"
+    }
 
     func moveTo(tile: SKSpriteNode, to position: CGFloat, direction: GameLogic.directions) {
         var action: SKAction
@@ -85,7 +103,20 @@ extension GameScene: GameSceneDelegate {
     }
     
     func gameOver() {
-        print("GameOver")
+        gameOverNode = SKSpriteNode(color: .brown, size: mainBoard.size)
+        gameOverNode.alpha = 0.7
+        gameOverNode.anchorPoint = CGPoint(x: 0.5,y: 0.5)
+        let label = SKLabelNode(text: "Game Over")
+        label.position = CGPoint(x: 0, y: label.frame.height)
+        label.fontSize = 50
+        label.fontColor = .black
+        let button = SKLabelNode(text: "Try again")
+        button.position = CGPoint(x: 0, y: -label.frame.height)
+        button.fontSize = 30
+        button.fontColor = .black
+        gameOverNode.addChild(button)
+        gameOverNode.addChild(label)
+        self.addChild(gameOverNode)
     }
 }
 
