@@ -12,6 +12,8 @@ import SpriteKit
 class GameLogic {
     
     weak var delegate: GameSceneDelegate? { didSet {
+        self.tiles = []
+        self.gameIsOver = false
         self.mainBoardSize = delegate!.setSize()
         computeMainbord()
         createBlankTiles()
@@ -20,21 +22,22 @@ class GameLogic {
     }
     private var mainBoardSize = CGSize.zero
     private let border: CGFloat = 5
-    private let gameSize: Int = 3
-    private var score: Int = 0
+    private let gameSize: Int = 2
+    private var score: Int = 4
     private var tiles: [TileModel] = []
     private var tileSize = CGSize.zero
     private var rectWidth = CGFloat.zero
     private var maxValue = CGFloat.zero
     private var minValue = CGFloat.zero
     private var coordinates: [CGPoint] = []
+    private var gameIsOver = false
     
     private func computeMainbord() {
         let numberOfRows = CGFloat(gameSize)
-        let tileWidthSize = ((mainBoardSize.height - (numberOfRows * border + border)) / numberOfRows).rounded(.towardZero)
+        let tileWidthSize = ((mainBoardSize.height - (numberOfRows * border + border)) / numberOfRows)
         self.tileSize = CGSize(width: tileWidthSize, height: tileWidthSize)
         self.rectWidth = self.border + tileWidthSize
-        self.maxValue = ((self.mainBoardSize.width - self.rectWidth - border) / 2).rounded(.towardZero)
+        self.maxValue = ((self.mainBoardSize.width - self.rectWidth - border) / 2)
         self.minValue = -maxValue
         var x: CGFloat = 0
         var y: CGFloat = 0
@@ -120,13 +123,13 @@ class GameLogic {
             y += rectWidth
             if checkRow(rowTiles) { return false }
         }
+        self.gameIsOver = true
         return true
     }
     
     func checkRow(_ rowTiles: [TileModel]) -> Bool {
         var index = 0
         while index + 1 < gameSize {
-            print(rowTiles.map{$0.title.text})
             if rowTiles[index].title.text == rowTiles[index + 1].title.text { return true }
             index += 1
         }
@@ -135,6 +138,7 @@ class GameLogic {
 
     
     private func swipe (direction: directions, sort: (TileModel, TileModel) -> Bool) {
+        guard !gameIsOver else { return }
         var position: CGFloat
         var target: CGFloat = 0
         var topPosition: CGFloat = 0

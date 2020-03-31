@@ -36,7 +36,7 @@ class GameScene: SKScene {
         setupSwipeControls()
         createMainBoard()
         createScoreBoard()
-        gameLogic.delegate = self
+        newGame()
     }
 
     
@@ -57,6 +57,10 @@ class GameScene: SKScene {
         mainBoard.anchorPoint = CGPoint(x: 0.5,y: 0.5)
         cropMainBoard.addChild(mainBoard)
         self.addChild(cropMainBoard)
+    }
+    
+    func newGame() {
+        gameLogic.delegate = self
     }
     
 }
@@ -94,7 +98,8 @@ extension GameScene: GameSceneDelegate {
     
     func createTile(_ tile: SKShapeNode, with title: SKLabelNode) {
         title.fontSize = 30
-        title.fontColor = .black
+        title.fontColor = .darkGray
+        title.fontName = "Helvetica"
         title.position = CGPoint(x: 0, y: -(title.frame.height)/2)
         tile.addChild(title)
         tile.alpha = 0
@@ -109,19 +114,22 @@ extension GameScene: GameSceneDelegate {
     
     func gameOver() {
         gameOverNode = SKSpriteNode(color: .brown, size: mainBoard.size)
-        gameOverNode.alpha = 0.7
+        gameOverNode.alpha = 0
         gameOverNode.anchorPoint = CGPoint(x: 0.5,y: 0.5)
         let label = SKLabelNode(text: "Game Over")
         label.position = CGPoint(x: 0, y: label.frame.height)
+        label.fontName = "Helvetica"
         label.fontSize = 50
         label.fontColor = .black
         let button = SKLabelNode(text: "Try again")
         button.position = CGPoint(x: 0, y: -label.frame.height)
         button.fontSize = 30
+        button.fontName = "Helvetica"
         button.fontColor = .black
         gameOverNode.addChild(button)
         gameOverNode.addChild(label)
         cropMainBoard.addChild(gameOverNode)
+        gameOverNode.run(SKAction.fadeAlpha(to: 0.7, duration: 0.3))
     }
 }
 
@@ -144,6 +152,14 @@ extension GameScene {
         let right = UISwipeGestureRecognizer(target: gameLogic, action: #selector(gameLogic.swipeRight))
         right.direction = .right
         view?.addGestureRecognizer(right)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        if gameOverNode.contains(touch.location(in: gameOverNode)) {
+            self.gameOverNode.removeFromParent()
+            newGame()
+        }
     }
 }
 
