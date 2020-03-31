@@ -44,7 +44,7 @@
 		502FF705242A48B200560D29 = {
 			isa = PBXGroup;
 			children = (
-				502FF710242A48B200560D29 /* testGame */,
+				502FF710242A48B200560D29 /* 2048 */,
 				502FF70F242A48B200560D29 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -57,7 +57,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		502FF710242A48B200560D29 /* testGame */ = {
+		502FF710242A48B200560D29 /* 2048 */ = {
 			isa = PBXGroup;
 			children = (
 				502FF711242A48B200560D29 /* AppDelegate.swift */,
@@ -70,7 +70,7 @@
 				502FF71C242A48B300560D29 /* LaunchScreen.storyboard */,
 				502FF71F242A48B300560D29 /* Info.plist */,
 			);
-			path = testGame;
+			path = 2048;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -108,7 +108,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 502FF709242A48B200560D29 /* Build configuration list for PBXProject "testGame" */;
+			buildConfigurationList = 502FF709242A48B200560D29 /* Build configuration list for PBXProject "2048" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -286,7 +286,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = DQW7D838MA;
-				INFOPLIST_FILE = testGame/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/2048/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -305,7 +305,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = DQW7D838MA;
-				INFOPLIST_FILE = testGame/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/2048/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -321,7 +321,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		502FF709242A48B200560D29 /* Build configuration list for PBXProject "testGame" */ = {
+		502FF709242A48B200560D29 /* Build configuration list for PBXProject "2048" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				502FF720242A48B300560D29 /* Debug */,

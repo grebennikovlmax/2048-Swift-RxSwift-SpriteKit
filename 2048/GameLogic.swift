@@ -14,6 +14,7 @@ class GameLogic {
     weak var delegate: GameSceneDelegate? { didSet {
         self.tiles = []
         self.gameIsOver = false
+        self.score = 0
         self.mainBoardSize = delegate!.setSize()
         computeMainbord()
         createBlankTiles()
@@ -22,8 +23,8 @@ class GameLogic {
     }
     private var mainBoardSize = CGSize.zero
     private let border: CGFloat = 5
-    private let gameSize: Int = 2
-    private var score: Int = 4
+    private let gameSize: Int = 4
+    private var score: Int = 0
     private var tiles: [TileModel] = []
     private var tileSize = CGSize.zero
     private var rectWidth = CGFloat.zero
@@ -217,7 +218,7 @@ extension GameLogic {
         case 512: return UIColor(red: 209/255, green: 0/255, blue: 0/255, alpha: 1)
         case 1024: return UIColor(red: 153/255, green: 2/255, blue: 2/255, alpha: 1)
         case 2048: return UIColor(red: 199/255, green: 8/255, blue: 100/255, alpha: 1)
-        default: return .white
+        default: return UIColor(red: 199/255, green: 8/255, blue: 100/255, alpha: 1)
         }
     }
 }

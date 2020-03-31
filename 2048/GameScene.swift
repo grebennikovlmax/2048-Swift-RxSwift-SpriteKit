@@ -34,8 +34,6 @@ class GameScene: SKScene {
         self.scaleMode = .resizeFill
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         setupSwipeControls()
-        createMainBoard()
-        createScoreBoard()
         newGame()
     }
 
@@ -43,6 +41,7 @@ class GameScene: SKScene {
     private func createScoreBoard() {
         scoreBoard = SKLabelNode(text: "Score: 0")
         scoreBoard.fontSize = 30
+        scoreBoard.fontName = "Helvetica"
         scoreBoard.fontColor = .black
         scoreBoard.position = CGPoint(x: 0, y: mainBoard.frame.height / 1.5)
         self.addChild(scoreBoard)
@@ -60,6 +59,9 @@ class GameScene: SKScene {
     }
     
     func newGame() {
+        self.removeAllChildren()
+        createMainBoard()
+        createScoreBoard()
         gameLogic.delegate = self
     }
     
