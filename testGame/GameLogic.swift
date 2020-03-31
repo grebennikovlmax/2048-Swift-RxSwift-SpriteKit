@@ -11,31 +11,31 @@ import SpriteKit
 
 class GameLogic {
     
-    weak var delegate: GameSceneDelegate? { didSet { createBlankTiles(); createTile() }}
-    var mainBoardSize = CGSize(width: 300, height: 300)
+    weak var delegate: GameSceneDelegate? { didSet {
+        self.mainBoardSize = delegate!.setSize()
+        computeMainbord()
+        createBlankTiles()
+        createTile()
+        }
+    }
+    private var mainBoardSize = CGSize.zero
     private let border: CGFloat = 5
-    private let gameSize: Int = 4
+    private let gameSize: Int = 3
     private var score: Int = 0
     private var tiles: [TileModel] = []
-    private var tileSize: CGSize {
-        let num = CGFloat(gameSize)
-        let sideSize = ((mainBoardSize.height - (num * border + border)) / num)
-        return CGSize(width: sideSize, height: sideSize)
-    }
+    private var tileSize = CGSize.zero
+    private var rectWidth = CGFloat.zero
+    private var maxValue = CGFloat.zero
+    private var minValue = CGFloat.zero
+    private var coordinates: [CGPoint] = []
     
-    private var rectWidth: CGFloat {
-        return border + tileSize.width
-    }
-    
-    private var maxValue: CGFloat {
-        return (mainBoardSize.width - rectWidth - border) / 2
-    }
-    
-    private var minValue: CGFloat {
-        return -maxValue
-    }
-    
-    private var coordinates: [CGPoint] {
+    private func computeMainbord() {
+        let numberOfRows = CGFloat(gameSize)
+        let tileWidthSize = ((mainBoardSize.height - (numberOfRows * border + border)) / numberOfRows).rounded(.towardZero)
+        self.tileSize = CGSize(width: tileWidthSize, height: tileWidthSize)
+        self.rectWidth = self.border + tileWidthSize
+        self.maxValue = ((self.mainBoardSize.width - self.rectWidth - border) / 2).rounded(.towardZero)
+        self.minValue = -maxValue
         var x: CGFloat = 0
         var y: CGFloat = 0
         var point: CGPoint
@@ -49,9 +49,9 @@ class GameLogic {
             y += rectWidth
             x = 0
         }
-        return coordinatesArray
+        self.coordinates = coordinatesArray
     }
-
+    
     enum directions {
         case up
         case down
@@ -106,6 +106,34 @@ class GameLogic {
         swipe(direction: .left, sort: { $0.node.position.x < $1.node.position.x })
     }
     
+    func isOver() -> Bool{
+        guard tiles.count == coordinates.count else { return false}
+        var x = minValue
+        var y = minValue
+        for _ in 0..<gameSize {
+          let rowTiles = tiles.filter { $0.node.position.x == x}.sorted(by: { $0.node.position.y < $1.node.position.y})
+            x += rectWidth
+            if checkRow(rowTiles) { return false }
+        }
+        for _ in 0..<gameSize {
+            let rowTiles = tiles.filter { $0.node.position.y == y}.sorted(by: { $0.node.position.x < $1.node.position.x})
+            y += rectWidth
+            if checkRow(rowTiles) { return false }
+        }
+        return true
+    }
+    
+    func checkRow(_ rowTiles: [TileModel]) -> Bool {
+        var index = 0
+        while index + 1 < gameSize {
+            print(rowTiles.map{$0.title.text})
+            if rowTiles[index].title.text == rowTiles[index + 1].title.text { return true }
+            index += 1
+        }
+        return false
+    }
+
+    
     private func swipe (direction: directions, sort: (TileModel, TileModel) -> Bool) {
         var position: CGFloat
         var target: CGFloat = 0
@@ -129,12 +157,13 @@ class GameLogic {
             guard position != nodePosition else { continue }
             delegate?.moveTo(tile: tile.node, to: position, direction: direction)
             isMoved = true
+            
         }
         if isMoved {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                 self.createTile()
             }
-        } else if !isMoved && tiles.count == coordinates.count {
+        } else if isOver() {
             delegate?.gameOver()
         }
         

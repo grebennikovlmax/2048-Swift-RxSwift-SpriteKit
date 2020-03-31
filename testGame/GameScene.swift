@@ -16,6 +16,7 @@ protocol GameSceneDelegate: AnyObject {
     func createTile(_ tile: SKShapeNode, with title: SKLabelNode)
     func moveTo(tile: SKShapeNode, to position: CGFloat, direction: GameLogic.directions)
     func deleteChild(_ tile: SKShapeNode)
+    func setSize() -> CGSize
 }
 
 class GameScene: SKScene {
@@ -48,7 +49,7 @@ class GameScene: SKScene {
     }
     
     private func createMainBoard() {
-        let size = gameLogic.mainBoardSize
+        let size = CGSize(width: 300, height: 300)
         let mask = SKShapeNode(rectOf: size, cornerRadius: 15)
         mask.fillColor = .white
         cropMainBoard.maskNode = mask
@@ -63,6 +64,10 @@ class GameScene: SKScene {
     //MARK: - GameSceneDelegate
 
 extension GameScene: GameSceneDelegate {
+    
+    func setSize() -> CGSize {
+        return mainBoard.size
+    }
     
     func createBlankTile(in point: CGPoint, with size: CGSize) {
         let blankTile = SKShapeNode(rectOf: size, cornerRadius: 10)
@@ -94,7 +99,7 @@ extension GameScene: GameSceneDelegate {
         tile.addChild(title)
         tile.alpha = 0
         cropMainBoard.addChild(tile)
-        tile.run(SKAction.fadeAlpha(to: 1, duration: 0.2))
+        tile.run(SKAction.fadeAlpha(to: 1, duration: 0.15))
         
     }
     
