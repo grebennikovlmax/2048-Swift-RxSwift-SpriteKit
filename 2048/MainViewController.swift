@@ -11,11 +11,10 @@ import SpriteKit
 
 class MainViewController: UIViewController {
     
-    var scene = GameScene()
-        
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view = SKView(frame: view.frame)
+        let scene = GameScene()
         if let skView = self.view as? SKView {
             skView.presentScene(scene)
         }
